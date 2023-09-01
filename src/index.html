@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loan</title>
+    <script src="./loan.js"></script>
+  </head>
+  <style>
+    label {
+      display: inline-block;
+      min-width: 140px;
+      text-align: left;
+    }
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .mwidth50{
+      min-width: 50%;
+    }
+    table {
+      margin: 0 auto;
+    }
+  </style>
+  <body>
+    <form action="" id="form">
+      <div>
+        <label for="">贷款总额（本金）:</label>
+        <input type="number" onblur="onBlur(this, 20)" name="principal" min="1" required value="20" />
+        <span>万元</span>
+      </div>
+      <div>
+        <label for="">年数:</label>
+        <input type="number" onblur="onBlur(this, 20)" name="year" min="1" required value="20" />
+      </div>
+      <div>
+        <label for="">年利率:</label>
+        <input type="number" onblur="onBlur(this, 4.2)" name="year_rate" required min="0" value="4.2" />
+        <span>%</span>
+      </div>
+      <div>
+        <button type="button" onclick="cal()">计算</button>
+        <!-- <button>submit</button> -->
+      </div>
+    </form>
+    <div class="flex">
+      <div class="mwidth50">
+        <h3 class="text-center">等额本息</h3>
+        <table id="loan-table" style="display: none">
+          <thead>
+            <tr>
+              <th>第n期</th>
+              <th>本期还款</th>
+              <th>还本</th>
+              <th>还息</th>
+              <th>尚欠本金</th>
+              <th>累计还本</th>
+              <th>累计还息</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="mwidth50">
+        <h3 class="text-center">等额本金</h3>
+        <table id="principal-table" style="display: none">
+          <thead>
+            <tr>
+              <th>第n期</th>
+              <th>本期还款</th>
+              <th>还本</th>
+              <th>还息</th>
+              <th>尚欠本金</th>
+              <th>累计还本</th>
+              <th>累计还息</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script>
+    function cal() {
+      let principal = document.querySelector("input[name=principal]").value;
+      let year = document.querySelector("input[name=year]").value;
+      let year_rate = document.querySelector("input[name=year_rate]").value;
+
+      let loan = new Loan(principal, year_rate, year);
+      render("loan-table", loan.payByEqualLoan);
+      render("principal-table", loan.payByEqualPrincipal);
+    }
+    function render(id, data) {
+      let el = document.getElementById(id);
+      let tbody = el.querySelector("tbody");
+      tbody.innerHTML = "";
+      let html = "";
+      for (let i = 0; i < data.length; i++) {
+        let v = data[i];
+        html += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${v[0]}</td>
+          <td>${v[1]}</td>
+          <td>${v[2]}</td>
+          <td>${v[3]}</td>
+          <td>${v[4]}</td>
+          <td>${v[5]}</td>
+        </tr>
+        `;
+      }
+      tbody.innerHTML = html;
+      el.style.display = "table";
+    }
+    function onBlur(el, defaultVal = 20){
+      let val = el.value;
+      val = Math.abs(val);
+      if(val == 0){
+        val = defaultVal;
+      }
+      el.value = val;
+    }
+  </script>
+</html>
